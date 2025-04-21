@@ -6,7 +6,9 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "link:check": "npx @biomejs/biome lint ./src",
+    "link:fix": "npx @biomejs/biome lint --write ./src"
   },
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.2.2",
@@ -27,6 +29,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
+    "@biomejs/biome": "^1.9.4",
     "@types/react": "~18.3.12",
     "typescript": "^5.3.3"
   },

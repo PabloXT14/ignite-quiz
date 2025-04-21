@@ -1,42 +1,44 @@
-import { useEffect, useState } from 'react';
-import { Alert, ScrollView, View } from 'react-native';
+import { useEffect, useState } from 'react'
+import { Alert, ScrollView, View } from 'react-native'
 
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native'
 
-import { styles } from './styles';
+import { styles } from './styles'
 
-import { QUIZ } from '../../data/quiz';
-import { historyAdd } from '../../storage/quizHistoryStorage';
+import { QUIZ } from '../../data/quiz'
+import { historyAdd } from '../../storage/quizHistoryStorage'
 
-import { Loading } from '../../components/Loading';
-import { Question } from '../../components/Question';
-import { QuizHeader } from '../../components/QuizHeader';
-import { ConfirmButton } from '../../components/ConfirmButton';
-import { OutlineButton } from '../../components/OutlineButton';
+import { Loading } from '../../components/Loading'
+import { Question } from '../../components/Question'
+import { QuizHeader } from '../../components/QuizHeader'
+import { ConfirmButton } from '../../components/ConfirmButton'
+import { OutlineButton } from '../../components/OutlineButton'
 
 interface Params {
-  id: string;
+  id: string
 }
 
-type QuizProps = typeof QUIZ[0];
+type QuizProps = (typeof QUIZ)[0]
 
 export function Quiz() {
-  const [points, setPoints] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [quiz, setQuiz] = useState<QuizProps>({} as QuizProps);
-  const [alternativeSelected, setAlternativeSelected] = useState<null | number>(null);
+  const [points, setPoints] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
+  const [currentQuestion, setCurrentQuestion] = useState(0)
+  const [quiz, setQuiz] = useState<QuizProps>({} as QuizProps)
+  const [alternativeSelected, setAlternativeSelected] = useState<null | number>(
+    null
+  )
 
-  const { navigate } = useNavigation();
+  const { navigate } = useNavigation()
 
-  const route = useRoute();
-  const { id } = route.params as Params;
+  const route = useRoute()
+  const { id } = route.params as Params
 
   function handleSkipConfirm() {
     Alert.alert('Pular', 'Deseja realmente pular a questão?', [
       { text: 'Sim', onPress: () => handleNextQuestion() },
-      { text: 'Não', onPress: () => { } }
-    ]);
+      { text: 'Não', onPress: () => {} },
+    ])
   }
 
   async function handleFinished() {
@@ -45,33 +47,33 @@ export function Quiz() {
       title: quiz.title,
       level: quiz.level,
       points,
-      questions: quiz.questions.length
-    });
+      questions: quiz.questions.length,
+    })
 
     navigate('finish', {
       points: String(points),
       total: String(quiz.questions.length),
-    });
+    })
   }
 
   function handleNextQuestion() {
     if (currentQuestion < quiz.questions.length - 1) {
       setCurrentQuestion(prevState => prevState + 1)
     } else {
-      handleFinished();
+      handleFinished()
     }
   }
 
   async function handleConfirm() {
     if (alternativeSelected === null) {
-      return handleSkipConfirm();
+      return handleSkipConfirm()
     }
 
     if (quiz.questions[currentQuestion].correct === alternativeSelected) {
-      setPoints(prevState => prevState + 1);
+      setPoints(prevState => prevState + 1)
     }
 
-    setAlternativeSelected(null);
+    setAlternativeSelected(null)
   }
 
   function handleStop() {
@@ -83,24 +85,24 @@ export function Quiz() {
       {
         text: 'Sim',
         style: 'destructive',
-        onPress: () => navigate('home')
+        onPress: () => navigate('home'),
       },
-    ]);
+    ])
 
-    return true;
+    return true
   }
 
   useEffect(() => {
-    const quizSelected = QUIZ.filter(item => item.id === id)[0];
-    setQuiz(quizSelected);
-    setIsLoading(false);
-  }, []);
+    const quizSelected = QUIZ.filter(item => item.id === id)[0]
+    setQuiz(quizSelected)
+    setIsLoading(false)
+  }, [])
 
   useEffect(() => {
     if (quiz.questions) {
-      handleNextQuestion();
+      handleNextQuestion()
     }
-  }, [points]);
+  }, [points])
 
   if (isLoading) {
     return <Loading />
@@ -130,6 +132,6 @@ export function Quiz() {
           <ConfirmButton onPress={handleConfirm} />
         </View>
       </ScrollView>
-    </View >
-  );
+    </View>
+  )
 }
