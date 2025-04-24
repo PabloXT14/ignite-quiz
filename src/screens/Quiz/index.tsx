@@ -49,6 +49,8 @@ export function Quiz() {
             [0, -15, 0, 15, 0, -15, 0]
           ),
         },
+        // Alternative 2
+        // { translateX: shake.value },
       ],
     }
   })
@@ -63,6 +65,13 @@ export function Quiz() {
       withTiming(3, { duration: 400, easing: Easing.bounce }),
       withTiming(0)
     )
+
+    // Alternative 2
+    // shake.value = withSequence(
+    //   withTiming(10, { duration: 100 }),
+    //   withTiming(-10, { duration: 100 }),
+    //   withTiming(0, { duration: 100 })
+    // )
   }
 
   function handleSkipConfirm() {
