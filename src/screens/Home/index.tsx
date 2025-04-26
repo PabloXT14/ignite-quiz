@@ -1,13 +1,7 @@
 import { useEffect, useState } from 'react'
-import { FlatList, View, TouchableOpacity, Text } from 'react-native'
+import { FlatList, View } from 'react-native'
 import { Trophy } from 'phosphor-react-native'
 import { useNavigation } from '@react-navigation/native'
-import Animated, {
-  FadeIn,
-  FlipInYLeft,
-  ZoomIn,
-  ZoomOut,
-} from 'react-native-reanimated'
 
 import { Level } from '../../components/Level'
 import { Header } from '../../components/Header'
@@ -19,8 +13,6 @@ import { QUIZZES } from '../../data/quizzes'
 export function Home() {
   const [quizzes, setQuizzes] = useState(QUIZZES)
   const [levels, setLevels] = useState([1, 2, 3])
-
-  const [show, setShow] = useState(true)
 
   const { navigate } = useNavigation()
 
@@ -49,34 +41,6 @@ export function Home() {
         onPress={() => navigate('history')}
       />
 
-      {show && (
-        <Animated.View
-          entering={ZoomIn.duration(500)}
-          exiting={ZoomOut.duration(500)}
-          style={{
-            marginTop: 16,
-            width: 64,
-            height: 64,
-            backgroundColor: '#00B37E',
-            borderRadius: 6,
-          }}
-        />
-      )}
-
-      <TouchableOpacity
-        onPress={() => setShow(prevState => !prevState)}
-        style={{
-          marginTop: 16,
-          backgroundColor: '#00B37E',
-          paddingVertical: 8,
-          paddingHorizontal: 16,
-          alignItems: 'center',
-          borderRadius: 6,
-        }}
-      >
-        <Text style={{ color: '#fff' }}>Toggle</Text>
-      </TouchableOpacity>
-
       <View style={styles.levels}>
         <Level
           title="Fácil"
@@ -101,8 +65,9 @@ export function Home() {
       <FlatList
         data={quizzes}
         keyExtractor={item => item.id}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <QuizCard
+            index={index}
             data={item}
             onPress={() => navigate('quiz', { id: item.id })}
           />
