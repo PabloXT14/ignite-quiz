@@ -111,7 +111,6 @@ export function Quiz() {
 
     if (quiz.questions[currentQuestion].correct === alternativeSelected) {
       setPoints(prevState => prevState + 1)
-      handleNextQuestion()
     } else {
       shakeAnimation()
     }
