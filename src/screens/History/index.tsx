@@ -88,14 +88,14 @@ export function History() {
                 }
               }}
               containerStyle={styles.swipeableContainer}
+              renderRightActions={() => null} // para garantir que não abra nada no lado direito (ios acaba deixando)
               renderLeftActions={() => (
-                <Pressable
-                  style={styles.swipeableRemove}
-                  onPress={() => handleRemove(item.id, index)}
-                >
+                <View style={styles.swipeableRemove}>
                   <Trash size={32} color={THEME.COLORS.GREY_100} />
-                </Pressable>
+                </View>
               )}
+              leftThreshold={10} // quanto o usuário abrir em px para ativar o onSwipeableOpen
+              onSwipeableOpen={() => handleRemove(item.id, index)}
             >
               <HistoryCard data={item} />
             </Swipeable>
