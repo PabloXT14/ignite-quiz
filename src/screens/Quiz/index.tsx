@@ -3,6 +3,7 @@ import { Alert, ScrollView, View } from 'react-native'
 import Animated, {
   Easing,
   interpolate,
+  useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
@@ -38,6 +39,7 @@ export function Quiz() {
   )
 
   const shake = useSharedValue(0)
+  const scrollY = useSharedValue(0)
 
   const shakeAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -134,6 +136,14 @@ export function Quiz() {
     return true
   }
 
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: event => {
+      // contentOffset = posicao do scroll no eixo x e y
+
+      scrollY.value = event.contentOffset.y
+    },
+  })
+
   useEffect(() => {
     const quizSelected = QUIZ.filter(item => item.id === id)[0]
     setQuiz(quizSelected)
@@ -152,9 +162,11 @@ export function Quiz() {
 
   return (
     <View style={styles.container}>
-      <ScrollView
+      <Animated.ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.question}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16} // for smooth scroll on ios
       >
         <QuizHeader
           title={quiz.title}
@@ -175,7 +187,7 @@ export function Quiz() {
           <OutlineButton title="Parar" onPress={handleStop} />
           <ConfirmButton onPress={handleConfirm} />
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   )
 }
