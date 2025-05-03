@@ -23,4 +23,8 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
     textAlign: 'center',
   },
+  header: {
+    width: '100%',
+    marginBottom: 21,
+  },
 })

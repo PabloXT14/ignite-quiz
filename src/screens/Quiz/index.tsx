@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Alert, Text, View } from 'react-native'
 import Animated, {
   Easing,
+  Extrapolate,
   interpolate,
   useAnimatedScrollHandler,
   useAnimatedStyle,
@@ -146,7 +147,7 @@ export function Quiz() {
     },
   })
 
-  const fixedProgessBarStyle = useAnimatedStyle(() => {
+  const fixedProgressBarStyle = useAnimatedStyle(() => {
     return {
       position: 'absolute',
       paddingTop: 50,
@@ -154,6 +155,23 @@ export function Quiz() {
       width: '110%',
       left: '-5%',
       zIndex: 1,
+      opacity: interpolate(scrollY.value, [50, 90], [0, 1], Extrapolate.CLAMP),
+      transform: [
+        {
+          translateY: interpolate(
+            scrollY.value,
+            [50, 90],
+            [-40, 0],
+            Extrapolate.CLAMP
+          ),
+        },
+      ],
+    }
+  })
+
+  const headerStyle = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(scrollY.value, [60, 90], [1, 0], Extrapolate.CLAMP),
     }
   })
 
@@ -175,7 +193,7 @@ export function Quiz() {
 
   return (
     <View style={styles.container}>
-      <Animated.View style={fixedProgessBarStyle}>
+      <Animated.View style={fixedProgressBarStyle}>
         <Text style={styles.title}>{quiz.title}</Text>
 
         <ProgressBar
@@ -190,11 +208,13 @@ export function Quiz() {
         onScroll={scrollHandler}
         scrollEventThrottle={16} // for smooth scroll on ios
       >
-        <QuizHeader
-          title={quiz.title}
-          currentQuestion={currentQuestion + 1}
-          totalOfQuestions={quiz.questions.length}
-        />
+        <Animated.View style={[styles.header, headerStyle]}>
+          <QuizHeader
+            title={quiz.title}
+            currentQuestion={currentQuestion + 1}
+            totalOfQuestions={quiz.questions.length}
+          />
+        </Animated.View>
 
         <Animated.View style={shakeAnimatedStyle}>
           <Question
