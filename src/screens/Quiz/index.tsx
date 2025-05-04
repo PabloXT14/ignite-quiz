@@ -9,6 +9,7 @@ import Animated, {
   useSharedValue,
   withSequence,
   withTiming,
+  runOnJS,
 } from 'react-native-reanimated'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler'
 
@@ -34,6 +35,7 @@ interface Params {
 type QuizProps = (typeof QUIZ)[0]
 
 const CARD_INCLINATION = 10
+const CARD_SKIP_AREA = -200
 
 export function Quiz() {
   const [points, setPoints] = useState(0)
@@ -201,6 +203,13 @@ export function Quiz() {
       }
     })
     .onEnd(event => {
+      const canSkipCard = event.translationX <= CARD_SKIP_AREA
+
+      if (canSkipCard) {
+        // para executar código javascript na thread de animação (pois a animação ocorre na thread diferente da thread de javascript do componente/app)
+        runOnJS(handleSkipConfirm)()
+      }
+
       cardPosition.value = withTiming(0)
     })
 
