@@ -33,6 +33,8 @@ interface Params {
 
 type QuizProps = (typeof QUIZ)[0]
 
+const CARD_INCLINATION = 10
+
 export function Quiz() {
   const [points, setPoints] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
@@ -178,10 +180,25 @@ export function Quiz() {
     }
   })
 
+  const dragStyle = useAnimatedStyle(() => {
+    const rotateZ = cardPosition.value / CARD_INCLINATION
+
+    return {
+      transform: [
+        { translateX: cardPosition.value },
+        { rotateZ: `${rotateZ}deg` },
+      ],
+    }
+  })
+
   // Pan = gesto de arrastar
   const onPan = Gesture.Pan()
     .onUpdate(event => {
-      cardPosition.value = event.translationX
+      const isMovingLeft = event.translationX < 0
+
+      if (isMovingLeft) {
+        cardPosition.value = event.translationX
+      }
     })
     .onEnd(event => {
       cardPosition.value = withTiming(0)
@@ -229,7 +246,7 @@ export function Quiz() {
         </Animated.View>
 
         <GestureDetector gesture={onPan}>
-          <Animated.View style={shakeAnimatedStyle}>
+          <Animated.View style={[shakeAnimatedStyle, dragStyle]}>
             <Question
               key={quiz.questions[currentQuestion].title}
               question={quiz.questions[currentQuestion]}
