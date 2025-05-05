@@ -195,6 +195,7 @@ export function Quiz() {
 
   // Pan = gesto de arrastar
   const onPan = Gesture.Pan()
+    .activateAfterLongPress(100)
     .onUpdate(event => {
       const isMovingLeft = event.translationX < 0
 
