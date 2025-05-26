@@ -47,6 +47,8 @@ export function Quiz() {
     null
   )
 
+  const [shouldAdvance, setShouldAdvance] = useState(false)
+
   const [statusReply, setStatusReply] = useState(0)
 
   const shake = useSharedValue(0)
@@ -77,7 +79,13 @@ export function Quiz() {
   function shakeAnimation() {
     shake.value = withSequence(
       withTiming(3, { duration: 400, easing: Easing.bounce }),
-      withTiming(0)
+      withTiming(0, undefined, finished => {
+        'worklet' // Para rodar o código a seguir na thread de animação
+
+        if (finished) {
+          runOnJS(handleNextQuestion)()
+        }
+      })
     )
 
     // Alternative 2
@@ -125,13 +133,13 @@ export function Quiz() {
 
     if (quiz.questions[currentQuestion].correct === alternativeSelected) {
       setStatusReply(1)
-      setPoints(prevState => prevState + 1)
+      setPoints(prevState => prevState + 1) // Ao adicionar pontos, executamos o handleNextQuestion em seguida através de um useEffect
+      setShouldAdvance(true)
     } else {
       setStatusReply(2)
-      shakeAnimation()
+      shakeAnimation() // Dentro dessa animação executamos o handleNextQuestion
     }
 
-    handleNextQuestion()
     setAlternativeSelected(null)
   }
 
@@ -225,11 +233,12 @@ export function Quiz() {
     setIsLoading(false)
   }, [])
 
-  // useEffect(() => {
-  //   if (quiz.questions) {
-  //     handleNextQuestion()
-  //   }
-  // }, [points])
+  useEffect(() => {
+    if (shouldAdvance) {
+      handleNextQuestion()
+      setShouldAdvance(false)
+    }
+  }, [points])
 
   if (isLoading) {
     return <Loading />
@@ -269,6 +278,7 @@ export function Quiz() {
               question={quiz.questions[currentQuestion]}
               alternativeSelected={alternativeSelected}
               setAlternativeSelected={setAlternativeSelected}
+              onUnmount={() => setStatusReply(0)}
             />
           </Animated.View>
         </GestureDetector>
