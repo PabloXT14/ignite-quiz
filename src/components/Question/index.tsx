@@ -3,8 +3,6 @@ import Animated, { Keyframe, runOnJS } from 'react-native-reanimated'
 
 import { Option } from '../Option'
 import { styles } from './styles'
-import { opacity } from 'react-native-reanimated/lib/typescript/Colors'
-import { transform } from '@babel/core'
 
 type QuestionProps = {
   title: string
