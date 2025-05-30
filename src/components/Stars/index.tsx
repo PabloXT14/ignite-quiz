@@ -1,10 +1,11 @@
 import { View } from 'react-native'
 import { Canvas, Path, LinearGradient } from '@shopify/react-native-skia'
-import {
+import Animated, {
   Easing,
   useSharedValue,
   withRepeat,
   withTiming,
+  BounceIn,
 } from 'react-native-reanimated'
 
 import TrophySvg from '@/assets/trophy.svg'
@@ -149,7 +150,9 @@ export function Stars() {
         />
       </Canvas>
 
-      <TrophySvg />
+      <Animated.View entering={BounceIn}>
+        <TrophySvg />
+      </Animated.View>
     </View>
   )
 }
