@@ -12,8 +12,8 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated'
 import { GestureDetector, Gesture } from 'react-native-gesture-handler'
-
 import { useNavigation, useRoute } from '@react-navigation/native'
+import { Audio } from 'expo-av'
 
 import { styles } from './styles'
 import { THEME } from '../../styles/theme'
@@ -28,6 +28,9 @@ import { ConfirmButton } from '../../components/ConfirmButton'
 import { OutlineButton } from '../../components/OutlineButton'
 import { ProgressBar } from '../../components/ProgressBar'
 import { OverlayFeedback } from '../../components/OverlayFeedback'
+
+import wrong from '@/assets/wrong.mp3'
+import correct from '@/assets/correct.mp3'
 
 interface Params {
   id: string
@@ -75,6 +78,19 @@ export function Quiz() {
 
   const route = useRoute()
   const { id } = route.params as Params
+
+  async function playSound(isCorrect: boolean) {
+    const file = isCorrect ? correct : wrong
+
+    // Loading sound
+    const { sound } = await Audio.Sound.createAsync(file, { shouldPlay: true })
+
+    // Garante that sound will play from start
+    await sound.setPositionAsync(0)
+
+    // Play sound
+    await sound.playAsync()
+  }
 
   function shakeAnimation() {
     shake.value = withSequence(
@@ -132,10 +148,15 @@ export function Quiz() {
     }
 
     if (quiz.questions[currentQuestion].correct === alternativeSelected) {
-      setStatusReply(1)
       setPoints(prevState => prevState + 1) // Ao adicionar pontos, executamos o handleNextQuestion em seguida através de um useEffect
       setShouldAdvance(true)
+
+      await playSound(true)
+
+      setStatusReply(1)
     } else {
+      await playSound(false)
+
       setStatusReply(2)
       shakeAnimation() // Dentro dessa animação executamos o handleNextQuestion
     }
